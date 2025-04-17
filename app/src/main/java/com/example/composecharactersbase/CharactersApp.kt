@@ -36,6 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.composecharactersbase.data.model.StdGhibliModel
+import com.example.composecharactersbase.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Preview
 @Composable
@@ -47,27 +52,6 @@ fun CharacterApp() {
 
 @Composable
 fun CharacterListScreen() {
-    // Lista de personagens mockados (dados fictícios para teste).
-    val characters = listOf(
-        CharacterMock(
-            name = "Rick Sanchez",
-            status = "Alive",
-            species = "Human",
-            imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
-        ),
-        CharacterMock(
-            name = "Morty Smith",
-            status = "Alive",
-            species = "Human",
-            imageUrl = "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterMock(
-            name = "Summer Smith",
-            status = "Alive",
-            species = "Human",
-            imageUrl = "https://rickandmortyapi.com/api/character/avatar/3.jpeg"
-        )
-    )
 
     // LazyColumn é uma lista otimizada para exibir grandes quantidades de dados.
     LazyColumn(
@@ -84,10 +68,24 @@ fun CharacterListScreen() {
 }
 
 @Composable
-fun CharacterCard(character: CharacterMock) {
+fun CharacterCard() {
     // Estado que controla se o personagem é favorito ou não.
     var isFavorite by remember { mutableStateOf(false) }
 
+    val character = remember { mutableListOf(StdGhibliModel)}
+
+    fun fetchStdGhibli() {
+        RetrofitClient.instance.getPeople().enqueue(object : Callback<StdGhibliModel> {
+            override fun onResponse(
+                call: Call<StdGhibliModel>,
+                response: Response<StdGhibliModel>
+            ) {
+                if (response.isSuccessful)
+
+            }
+
+        })
+    }
     // Card é um componente que cria um contêiner com elevação e bordas arredondadas.
     Card(
         modifier = Modifier
@@ -147,11 +145,3 @@ fun CharacterCard(character: CharacterMock) {
         }
     }
 }
-
-// Classe de dados que representa um personagem.
-data class CharacterMock(
-    val name: String, // Nome do personagem.
-    val status: String, // Status do personagem (ex.: Vivo, Morto).
-    val species: String, // Espécie do personagem (ex.: Humano, Alien).
-    val imageUrl: String // URL da imagem do personagem.
-)
